@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="referrer" content="no-referrer" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Youtube Playlist Creator</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <!--[if lt IE 9]>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1>Youtube Playlist Creator</h1>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addvid">
+                        <span class="glyphicon glyphicon-plus"></span> Add
+                    </button>
+                    <button type="button" class="btn btn-success create-link">
+                        <span class="glyphicon glyphicon-floppy-disk"></span> Create
+                    </button>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="well">
+                    <span class="playlist-text"></span>
+                    <br>
+                    <br>
+                    <a href="#" class="playlist-link" target="_blank"></a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 taglist"></div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-sm btn-success add-all">
+                        <span class="glyphicon glyphicon-plus"></span> Add All
+                    </button>
+                    <button type="button" class="btn btn-sm btn-danger clear-list">
+                        <span class="glyphicon glyphicon-trash"></span> Clear
+                    </button>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-xs-6">
+                <ul class="list-group videolist">
+                </ul>
+            </div>
+            <div class="col-xs-6">
+                <ul class="list-group playlist">
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="addvid" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <form role="form" id="addvidform" data-msg="#addvidmsg" data-link="#vidlink" data-tags="#vidtags">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Add a Video</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="well" id="addvidmsg"></div>
+                        <div class="form-group">
+                            <label for="vidlink">Link:</label>
+                            <input type="text" class="form-control" id="vidlink">
+                        </div>
+                        <div class="form-group">
+                            <label for="vidtags">Tags:</label>
+                            <input type="text" class="form-control" id="vidtags">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger form-clear">
+                            Clear
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                        <button type="button" class="btn btn-warning" data-dismiss="modal">
+                            Close
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Submit
+                            <span class="glyphicon glyphicon-send"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dot/1.0.3/doT.min.js"></script>
+    <script src="js/templates.js"></script>
+    <script src="js/script.js"></script>
+</body>
+
+</html>
