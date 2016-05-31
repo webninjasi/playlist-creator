@@ -52,21 +52,23 @@
                     <button type="button" class="btn btn-sm btn-success add-all">
                         <span class="glyphicon glyphicon-plus"></span> Add All
                     </button>
-                    <button type="button" class="btn btn-sm btn-danger clear-list">
-                        <span class="glyphicon glyphicon-trash"></span> Clear
+                    <button type="button" class="btn btn-sm btn-danger remove-all">
+                        <span class="glyphicon glyphicon-minus"></span> Remove All
                     </button>
                 </div>
-            </div>
-        </div>
-        <br>
-        <div class="row">
-            <div class="col-xs-6">
-                <ul class="list-group videolist">
-                </ul>
-            </div>
-            <div class="col-xs-6">
-                <ul class="list-group playlist">
-                </ul>
+                <br>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Thumbnail</th>
+                            <th>Title</th>
+                            <th>Tags</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="videolist">
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

@@ -10,18 +10,20 @@ $(".form-clear").click(function() {
     $(this).closest('form').find("input[type=text], textarea").val("");
 });
 
-$(".create-link").click(createLink);
-$(".clear-list").click(clearPlaylist);
-
 $(".add-all").click(function() {
-    $(".list-group-item:visible").each(function() {
+    $(".videolist tr:visible").each(function() {
         var id = $(this).data("id");
         if (playlist[id] || !videolist[id])
             return;
 
         playlist[id] = videolist[id];
     });
-    generatePlaylist();
+
+    updateView();
+});
+$(".remove-all").click(function() {
+    playlist = {};
+    updateView();
 });
 
 $(".taglist").on("click", ".taglist-all", function() {
@@ -35,7 +37,6 @@ $(".taglist").on("click", ".taglist-all", function() {
         $(".list-group-item").hide();
     }
 });
-
 $(".taglist").on("click", ".taglist-tag", function() {
     var state = $(this).hasClass("label-success");
     state = !state;
@@ -61,16 +62,15 @@ $(".taglist").on("click", ".taglist-tag", function() {
 });
 
 $(".videolist").on("click", ".add-playlist", function() {
-    var id = $(this).closest(".list-group-item").data("id");
+    var id = $(this).closest("tr").data("id");
     if (playlist[id] || !videolist[id])
         return;
 
     playlist[id] = videolist[id];
-    generatePlaylist();
+    updateView();
 });
-
 $(".videolist").on("click", ".edit-video", function() {
-    var id = $(this).closest(".list-group-item").data("id");
+    var id = $(this).closest("tr").data("id");
     if (!videolist[id])
         return;
 
@@ -83,13 +83,12 @@ $(".videolist").on("click", ".edit-video", function() {
     saveVideoList();
     updateView();
 });
-
 $(".videolist").on("click", ".del-video", function() {
     if (!confirm("Are you sure?")) {
         return;
     }
 
-    var id = $(this).closest(".list-group-item").data("id");
+    var id = $(this).closest("tr").data("id");
     if (!videolist[id])
         return;
 
@@ -97,14 +96,13 @@ $(".videolist").on("click", ".del-video", function() {
     saveVideoList();
     updateView();
 });
-
-$(".playlist").on("click", ".rem-playlist", function() {
-    var id = $(this).closest(".list-group-item").data("id");
+$(".videolist").on("click", ".rem-playlist", function() {
+    var id = $(this).closest("tr").data("id");
     if (!playlist[id])
         return;
 
     delete playlist[id];
-    generatePlaylist();
+    updateView();
 });
 
 $("#addvidform").on("submit", function() {
@@ -145,9 +143,18 @@ $("#addvidform").on("submit", function() {
 
     return false;
 });
+$(".create-link").click(createLink);
 
 function getVideoInfo(id, callback) {
     return $.getJSON('https://noembed.com/embed', { format: 'json', url: "https://www.youtube.com/watch?v=" + encodeURIComponent(id) }, callback);
+}
+
+function createLink() {
+    var link = "http://www.youtube.com/watch_videos?video_ids=" + Object.keys(playlist).join(",");
+
+    $(".playlist-text").text(link);
+    $(".playlist-link").text(link);
+    $(".playlist-link").attr("href", link);
 }
 
 function loadVideoList() {
@@ -157,13 +164,6 @@ function loadVideoList() {
 
     videolist = JSON.parse(localPlaylist);
     updateView();
-}
-
-function updateView() {
-    var tags = parseTags(videolist);
-
-    $(".videolist").html(generateList(videolist));
-    $(".taglist").html(tplTag(tags));
 }
 
 function saveVideoList() {
@@ -176,13 +176,11 @@ function saveVideoList() {
     }
 }
 
-function clearPlaylist() {
-    playlist = {}
-    $(".playlist").html("");
-}
+function updateView() {
+    var tags = parseTags(videolist);
 
-function generateList(list, included) {
-    return tplListItem({ included: included, data: list });
+    $(".videolist").html(tplListItem(videolist));
+    $(".taglist").html(tplTag(tags));
 }
 
 function parseTags(list) {
@@ -204,18 +202,6 @@ function parseTags(list) {
     }
 
     return tag2vids;
-}
-
-function generatePlaylist() {
-    $(".playlist").html(generateList(playlist, true));
-}
-
-function createLink() {
-    var link = "http://www.youtube.com/watch_videos?video_ids=" + Object.keys(playlist).join(",");
-
-    $(".playlist-text").text(link);
-    $(".playlist-link").text(link);
-    $(".playlist-link").attr("href", link);
 }
 
 function fixTags(tags) {
