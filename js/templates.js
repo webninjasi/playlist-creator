@@ -5,6 +5,11 @@ var tplListItem = doT.template('\
 {{? hasSelectedTag(tags) }}\
 <tr{{? playlist[id] }} class="success"{{?}} data-id="{{=id}}">\
 	<td>\
+		<a class="btn btn-xs btn-{{? playlist[id] }}danger rem{{??}}success add{{?}}-playlist">\
+			<span class="glyphicon glyphicon-{{? playlist[id] }}minus{{??}}plus{{?}}"></span>\
+		</a>\
+	</td>\
+	<td>\
 		{{? dat.img}}\
 		<a href="https://www.youtube.com/watch?v={{=id}}" target="_blank">\
 			<img class="thumbnail" src="{{=dat.img}}" height="64">\
@@ -24,9 +29,6 @@ var tplListItem = doT.template('\
 		{{?}}\
 	</td>\
 	<td>\
-		<a class="btn btn-xs btn-{{? playlist[id] }}danger rem{{??}}success add{{?}}-playlist">\
-			<span class="glyphicon glyphicon-{{? playlist[id] }}minus{{??}}plus{{?}}"></span>\
-		</a>\
 		<a class="btn btn-xs btn-warning edit-video">\
 			<span class="glyphicon glyphicon-edit"></span>\
 		</a>\
