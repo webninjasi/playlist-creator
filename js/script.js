@@ -1,4 +1,4 @@
-var playlist = {};
+var playlist = [];
 var videolist = {};
 var taglist = {};
 var selectedTag;
@@ -14,16 +14,16 @@ $(".form-clear").click(function() {
 $(".add-all").click(function() {
     $(".videolist tr:visible").each(function() {
         var id = $(this).data("id");
-        if (playlist[id] || !videolist[id])
+        if (inPlaylist(id) || !videolist[id])
             return;
 
-        playlist[id] = videolist[id];
+        addPlaylist(id);
     });
 
     updateView();
 });
 $(".remove-all").click(function() {
-    playlist = {};
+    playlist = [];
     updateView();
 });
 
@@ -38,12 +38,29 @@ $(".taglist").on("click", ".taglist-tag", function() {
 
 $(".videolist").on("click", ".add-playlist", function() {
     var id = $(this).closest("tr").data("id");
-    if (playlist[id] || !videolist[id])
+    if (inPlaylist(id) || !videolist[id])
         return;
 
-    playlist[id] = videolist[id];
+    addPlaylist(id);
     updateView();
 });
+$(".videolist").on("click", ".playlist-up", function() {
+    var id = $(this).closest("tr").data("id");
+    if (!inPlaylist(id) || !videolist[id])
+        return;
+
+    swapPlaylist(id, -1);
+    updateView();
+});
+$(".videolist").on("click", ".playlist-down", function() {
+    var id = $(this).closest("tr").data("id");
+    if (!inPlaylist(id) || !videolist[id])
+        return;
+
+    swapPlaylist(id, 1);
+    updateView();
+});
+
 $(".videolist").on("click", ".edit-video", function() {
     var id = $(this).closest("tr").data("id");
     if (!videolist[id])
@@ -73,10 +90,9 @@ $(".videolist").on("click", ".del-video", function() {
 });
 $(".videolist").on("click", ".rem-playlist", function() {
     var id = $(this).closest("tr").data("id");
-    if (!playlist[id])
-        return;
+    if (!inPlaylist(id)) return;
 
-    delete playlist[id];
+    removePlaylist(id);
     updateView();
 });
 
@@ -125,7 +141,7 @@ function getVideoInfo(id, callback) {
 }
 
 function createLink() {
-    var link = "http://www.youtube.com/watch_videos?video_ids=" + Object.keys(playlist).join(",");
+    var link = "http://www.youtube.com/watch_videos?video_ids=" + playlist.join(",");
 
     $(".playlist-text").text(link);
     $(".playlist-link").text(link);
@@ -158,8 +174,22 @@ function updateView() {
     if (!taglist[selectedTag])
         selectedTag = undefined;
 
-    $(".videolist").html(tplListItem(videolist));
+    $(".videolist").html(tplListItem({ list: videolist, order: getOrderedList() }));
     $(".taglist").html(tplTag(taglist));
+}
+
+function getOrderedList() {
+    var keys = Object.keys(videolist);
+
+    keys.sort(function(a, b) {
+        return indexOrLen(playlist, a) - indexOrLen(playlist, b);
+    });
+
+    return keys;
+}
+
+function indexOrLen(arr, elm) {
+    return (arr.indexOf(elm) + 1 || arr.length + 1) - 1;
 }
 
 function parseTags(list) {
@@ -187,4 +217,36 @@ function fixTags(tags) {
 
 function hasSelectedTag(tags) {
     return !selectedTag || tags.indexOf(selectedTag) != -1
+}
+
+function inPlaylist(id) {
+    return playlist && playlist.indexOf(id) != -1;
+}
+
+function addPlaylist(id) {
+    if (inPlaylist(id))
+        return;
+
+    playlist.push(id);
+}
+
+function removePlaylist(id) {
+    var idx = playlist.indexOf(id);
+    if (idx == -1)
+        return;
+
+    playlist.splice(idx, 1);
+}
+
+function swapPlaylist(id, off) {
+    var idx = playlist.indexOf(id);
+    if (idx == -1)
+        return;
+
+    var temp = playlist[idx + off];
+    if (!temp)
+        return;
+
+    playlist[idx + off] = playlist[idx];
+    playlist[idx] = temp;
 }
