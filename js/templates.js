@@ -1,6 +1,8 @@
 var tplListItem = doT.template('\
 {{ for(var id in it) { }}\
 {{ var dat = it[id]; }}\
+{{ var tags = dat.tags.split(" "); }}\
+{{? hasSelectedTag(tags) }}\
 <tr{{? playlist[id] }} class="success"{{?}} data-id="{{=id}}">\
 	<td>\
 		{{? dat.img}}\
@@ -16,7 +18,7 @@ var tplListItem = doT.template('\
 	<td>{{=dat.title}}</td>\
 	<td>\
 		{{? dat.tags}}\
-		{{~dat.tags.split(" ") :tag:tid}}\
+		{{~tags :tag:tid}}\
 		<span class="label label-warning video-tags">{{=tag}}</span>\
 		{{~}}\
 		{{?}}\
@@ -33,9 +35,10 @@ var tplListItem = doT.template('\
 		</a>\
 	</td>\
 </tr>\
+{{?}}\
 {{ } }}');
 var tplTag = doT.template('\
-<a href="#" class="label label-success taglist-all">All</a>\
+<a href="#" class="label label-{{? selectedTag }}warning{{??}}success{{?}} taglist-all">All</a>\
 {{ for (var tag in it) { }}\
-<a href="#" class="label label-success taglist-tag">{{=tag}}</a>\
+<a href="#" class="label label-{{? tag == selectedTag }}success{{??}}warning{{?}} taglist-tag">{{=tag}}</a>\
 {{ } }}');

@@ -1,6 +1,7 @@
 var playlist = {};
 var videolist = {};
-var tag2vids = {};
+var taglist = {};
+var selectedTag;
 
 if (typeof(Storage) !== "undefined") {
     loadVideoList();
@@ -27,38 +28,12 @@ $(".remove-all").click(function() {
 });
 
 $(".taglist").on("click", ".taglist-all", function() {
-    var state = $(this).hasClass("label-success");
-    state = !state;
-    if (state) {
-        $(".taglist .label").addClass("label-success").removeClass("label-warning");
-        $(".list-group-item").show();
-    } else {
-        $(".taglist .label").addClass("label-warning").removeClass("label-success");
-        $(".list-group-item").hide();
-    }
+    selectedTag = undefined;
+    updateView();
 });
 $(".taglist").on("click", ".taglist-tag", function() {
-    var state = $(this).hasClass("label-success");
-    state = !state;
-    if (state) {
-        $(this).addClass("label-success").removeClass("label-warning");
-    } else {
-        $(this).addClass("label-warning").removeClass("label-success");
-        $(".taglist .taglist-all").addClass("label-warning").removeClass("label-success");
-    }
-
-    var ids = [];
-
-    $(".taglist .label-success").each(function() {
-        ids = ids.concat(tag2vids[$(this).text()]);
-    });
-    $(".list-group-item").hide();
-    $(".list-group-item").each(function() {
-        var id = $(this).data("id");
-
-        if (ids.indexOf(id) != -1)
-            $(this).show();
-    });
+    selectedTag = $(this).text();
+    updateView();
 });
 
 $(".videolist").on("click", ".add-playlist", function() {
@@ -163,6 +138,7 @@ function loadVideoList() {
         return;
 
     videolist = JSON.parse(localPlaylist);
+
     updateView();
 }
 
@@ -177,14 +153,17 @@ function saveVideoList() {
 }
 
 function updateView() {
-    var tags = parseTags(videolist);
+    parseTags(videolist);
+
+    if (!taglist[selectedTag])
+        selectedTag = undefined;
 
     $(".videolist").html(tplListItem(videolist));
-    $(".taglist").html(tplTag(tags));
+    $(".taglist").html(tplTag(taglist));
 }
 
 function parseTags(list) {
-    tag2vids = {};
+    taglist = {};
 
     for (var id in list) {
         var currtags = list[id].tags;
@@ -194,14 +173,9 @@ function parseTags(list) {
         currtags = currtags.split(" ");
 
         for (var i = 0; i < currtags.length; i++) {
-            if (tag2vids[currtags[i]])
-                tag2vids[currtags[i]].push(id);
-            else
-                tag2vids[currtags[i]] = [id];
+            taglist[currtags[i]] = true;
         }
     }
-
-    return tag2vids;
 }
 
 function fixTags(tags) {
@@ -209,4 +183,8 @@ function fixTags(tags) {
         return "";
 
     return tags.trim().replace(/\s+/, " ");
+}
+
+function hasSelectedTag(tags) {
+    return !selectedTag || tags.indexOf(selectedTag) != -1
 }
