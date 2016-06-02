@@ -10,6 +10,9 @@ if (typeof(Storage) !== "undefined") {
 $(".form-clear").click(function() {
     $(this).closest('form').find("input[type=text], textarea").val("");
 });
+$(".playlist-text").click(function() {
+    this.setSelectionRange(0, this.value.length);
+});
 
 $(".add-all").click(function() {
     $(".videolist tr:visible").each(function() {
@@ -134,17 +137,15 @@ $("#addvidform").on("submit", function() {
 
     return false;
 });
-$(".create-link").click(createLink);
 
 function getVideoInfo(id, callback) {
     return $.getJSON('https://noembed.com/embed', { format: 'json', url: "https://www.youtube.com/watch?v=" + encodeURIComponent(id) }, callback);
 }
 
-function createLink() {
+function updateLink() {
     var link = "http://www.youtube.com/watch_videos?video_ids=" + playlist.join(",");
 
-    $(".playlist-text").text(link);
-    $(".playlist-link").text(link);
+    $(".playlist-text").val(link);
     $(".playlist-link").attr("href", link);
 }
 
@@ -176,6 +177,8 @@ function updateView() {
 
     $(".videolist").html(tplListItem({ list: videolist, order: getOrderedList() }));
     $(".taglist").html(tplTag(taglist));
+
+    updateLink();
 }
 
 function getOrderedList() {
