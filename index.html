@@ -114,6 +114,10 @@
                     <div class="modal-body">
                         <div class="well" id="well_importvid"></div>
                         <div class="form-group">
+                            <label for="textarea_jsondata">JSON File:</label>
+                            <input type="file" id="file_jsondata" />
+                        </div>
+                        <div class="form-group">
                             <label for="textarea_jsondata">JSON Data:</label>
                             <textarea class="form-control" id="textarea_jsondata"></textarea>
                         </div>
@@ -150,6 +154,10 @@
                     </div>
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-success download-data">
+                        Download
+                        <span class="glyphicon glyphicon-download-alt"></span>
+                    </button>
                     <button type="button" class="btn btn-primary" data-dismiss="modal">
                         Close
                         <span class="glyphicon glyphicon-remove"></span>
@@ -161,6 +169,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dot/1.0.3/doT.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/blob-polyfill/1.0.20150320/Blob.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2014-11-29/FileSaver.min.js"></script>
     <script src="js/templates.js"></script>
     <script src="js/script.js"></script>
 </body>

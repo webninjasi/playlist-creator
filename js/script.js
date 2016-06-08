@@ -148,16 +148,28 @@ $("#form_importvid").on("submit", function() {
         return false;
     }
 
-    var newVidList = JSON.parse(content);
-    if (!newVidList) {
-        $msg.text("Invalid JSON data!");
+    var newVidList;
+
+    try {
+        newVidList = JSON.parse(content);
+        if (!newVidList) {
+            $msg.text("Invalid JSON data!");
+            return false;
+        }
+    }
+    catch (err) {
         return false;
     }
 
     var replaceall = $($(this).data("checkbox")).is(':checked');
     if (replaceall) {
         videolist = newVidList;
+        
+        saveVideoList();
+        updateView();
+
         $msg.text("Replaced video list successfully!");
+
         return false;
     }
 
@@ -169,6 +181,41 @@ $("#form_importvid").on("submit", function() {
     updateView();
 
     $msg.text("Imported video list successfully!");
+
+    return false;
+});
+$(".download-data").click(function() {
+    var isFileSaverSupported = !!new Blob;
+    if (!isFileSaverSupported) {
+        alert("File saver isn't supported on your browser!");
+        return false;
+    }
+
+    var blob = new Blob([JSON.stringify(videolist)], {type: "application/json;charset=utf-8"});
+    saveAs(blob, "playlist-data.json");
+});
+$("#file_jsondata").change(function() {
+    var file = $(this).get(0).files[0];
+    if (!file) {
+        return false;
+    }
+
+    var $msg = $($(this).closest("form").data("msg"));
+    var $content = $($(this).closest("form").data("content"));
+
+    var reader = new FileReader();
+    reader.readAsText(file, "UTF-8");
+
+    $msg.text("Loading video list from the file!");
+
+    reader.onload = function (evt) {
+        $content.val(evt.target.result);
+        $msg.text("Loaded video list from '" + file.name + "' successfully!");
+    }
+
+    reader.onerror = function (evt) {
+        $msg.text("An error occured while loading video list from '" + file.name + "'!");
+    }
 
     return false;
 });
