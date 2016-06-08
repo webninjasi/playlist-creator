@@ -298,7 +298,7 @@ function parseTags(list) {
         currtags = currtags.split(" ");
 
         for (var i = 0; i < currtags.length; i++) {
-            taglist[currtags[i]] = true;
+            taglist[currtags[i]] = taglist[currtags[i]] ? taglist[currtags[i]] + 1 : 1;
         }
     }
 }

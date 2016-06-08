@@ -48,8 +48,8 @@ var tplListItem = doT.template('\
 </tr>\
 {{?}}\
 {{~}}');
-var tplTag = doT.template('\
+var tplTag = doT.template('<b>Tags: </b>\
 <a href="#" class="label label-{{? selectedTag }}warning{{??}}success{{?}} taglist-all">All</a>\
 {{ for (var tag in it) { }}\
-<a href="#" class="label label-{{? tag == selectedTag }}success{{??}}warning{{?}} taglist-tag">{{=tag}}</a>\
+<a href="#" class="label label-{{? tag == selectedTag }}success{{??}}warning{{?}} taglist-tag">{{=tag}} <span class="badge">{{=it[tag]}}</span></a>\
 {{ } }}');
