@@ -1,178 +1,236 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="referrer" content="no-referrer" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Youtube Playlist Creator</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-    <!--[if lt IE 9]>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
-    <![endif]-->
-</head>
-
-<body>
-    <div class="container">
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="page-header">
-                    <h1>Youtube Playlist Creator</h1>
+    <head>
+        <meta charset="utf-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta name="referrer" content="no-referrer"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>
+            Youtube Playlist Creator
+        </title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="css/style.css"/>
+        <!--[if lt IE 9]>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="page-header">
+                        <h1>
+                            Youtube Playlist Creator
+                        </h1>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addvid">
+                            <span class="glyphicon glyphicon-plus">
+                            </span>
+                            Add Video
+                        </button>
+                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#importvid">
+                            <span class="glyphicon glyphicon-import">
+                            </span>
+                            Import
+                        </button>
+                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#exportvid">
+                            <span class="glyphicon glyphicon-export">
+                            </span>
+                            Export
+                        </button>
+                    </div>
+                    <br/>
+                    <br/>
+                    <div class="input-group">
+                        <span class="input-group-btn">
+                            <a class="btn btn-info playlist-link glyphicon glyphicon-play-circle" href="#" target="_blank">
+                            </a>
+                        </span>
+                        <input type="text" class="form-control playlist-text"/>
+                    </div>
+                    <br/>
+                    <div class="taglist">
+                    </div>
+                    <br/>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-success add-all">
+                            <span class="glyphicon glyphicon-plus">
+                            </span>
+                            Add All
+                        </button>
+                        <button type="button" class="btn btn-sm btn-danger remove-all">
+                            <span class="glyphicon glyphicon-minus">
+                            </span>
+                            Remove All
+                        </button>
+                    </div>
+                    <br/>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Playlist
+                                </th>
+                                <th>
+                                    Thumbnail
+                                </th>
+                                <th>
+                                    Title
+                                </th>
+                                <th>
+                                    Tags
+                                </th>
+                                <th>
+                                    Video
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="videolist">
+                        </tbody>
+                    </table>
                 </div>
-                <div class="btn-group">
-                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addvid">
-                        <span class="glyphicon glyphicon-plus"></span> Add Video
-                    </button>
-                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#importvid">
-                        <span class="glyphicon glyphicon-import"></span> Import
-                    </button>
-                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#exportvid">
-                        <span class="glyphicon glyphicon-export"></span> Export
-                    </button>
-                </div>
-                <br>
-                <br>
-                <div class="input-group">
-                    <span class="input-group-btn">
-                        <a class="btn btn-info playlist-link glyphicon glyphicon-play-circle" href="#" target="_blank"></a>
-                    </span>
-                    <input type="text" class="form-control playlist-text">
-                </div>
-                <br>
-                <div class="taglist"></div>
-                <br>
-                <div class="btn-group">
-                    <button type="button" class="btn btn-sm btn-success add-all">
-                        <span class="glyphicon glyphicon-plus"></span> Add All
-                    </button>
-                    <button type="button" class="btn btn-sm btn-danger remove-all">
-                        <span class="glyphicon glyphicon-minus"></span> Remove All
-                    </button>
-                </div>
-                <br>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Playlist</th>
-                            <th>Thumbnail</th>
-                            <th>Title</th>
-                            <th>Tags</th>
-                            <th>Video</th>
-                        </tr>
-                    </thead>
-                    <tbody class="videolist">
-                    </tbody>
-                </table>
             </div>
         </div>
-    </div>
-    <div id="addvid" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <!-- Modal content-->
-            <div class="modal-content">
-                <form role="form" id="addvidform" data-msg="#addvidmsg" data-link="#vidlink" data-tags="#vidtags">
+        <div id="addvid" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <form role="form" id="addvidform" data-msg="#addvidmsg" data-link="#vidlink" data-tags="#vidtags">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">
+                                &times;
+                            </button>
+                            <h4 class="modal-title">
+                                Add a Video
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="well" id="addvidmsg">
+                            </div>
+                            <div class="form-group">
+                                <label for="vidlink">
+                                    Link:
+                                </label>
+                                <input type="text" class="form-control" id="vidlink"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="vidtags">
+                                    Tags:
+                                </label>
+                                <input type="text" class="form-control" id="vidtags"/>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger form-clear">
+                                Clear
+                                <span class="glyphicon glyphicon-trash">
+                                </span>
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                Submit
+                                <span class="glyphicon glyphicon-send">
+                                </span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div id="importvid" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <form role="form" id="form_importvid" data-msg="#well_importvid" data-content="#textarea_jsondata" data-checkbox="#checkbox_replacedata">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">
+                                &times;
+                            </button>
+                            <h4 class="modal-title">
+                                Import Videos
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="well" id="well_importvid">
+                            </div>
+                            <div class="form-group">
+                                <label for="textarea_jsondata">
+                                    JSON File:
+                                </label>
+                                <input type="file" id="file_jsondata"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="textarea_jsondata">
+                                    JSON Data:
+                                </label>
+                                <textarea class="form-control" id="textarea_jsondata">
+                                </textarea>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input id="checkbox_replacedata" type="checkbox" value="0"/>
+                                    Replace
+                                </label>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger form-clear">
+                                Clear
+                                <span class="glyphicon glyphicon-trash">
+                                </span>
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                Submit
+                                <span class="glyphicon glyphicon-send">
+                                </span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div id="exportvid" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Add a Video</h4>
+                        <button type="button" class="close" data-dismiss="modal">
+                            &times;
+                        </button>
+                        <h4 class="modal-title">
+                            Export Videos
+                        </h4>
                     </div>
                     <div class="modal-body">
-                        <div class="well" id="addvidmsg"></div>
                         <div class="form-group">
-                            <label for="vidlink">Link:</label>
-                            <input type="text" class="form-control" id="vidlink">
-                        </div>
-                        <div class="form-group">
-                            <label for="vidtags">Tags:</label>
-                            <input type="text" class="form-control" id="vidtags">
+                            <label for="textarea_exportdata">
+                                JSON Data:
+                            </label>
+                            <textarea class="form-control" id="textarea_exportdata">
+                            </textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger form-clear">
-                            Clear
-                            <span class="glyphicon glyphicon-trash"></span>
+                        <button type="button" class="btn btn-success download-data">
+                            Download
+                            <span class="glyphicon glyphicon-download-alt">
+                            </span>
                         </button>
-                        <button type="submit" class="btn btn-primary">
-                            Submit
-                            <span class="glyphicon glyphicon-send"></span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div id="importvid" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <!-- Modal content-->
-            <div class="modal-content">
-                <form role="form" id="form_importvid" data-msg="#well_importvid" data-content="#textarea_jsondata" data-checkbox="#checkbox_replacedata">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Import Videos</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="well" id="well_importvid"></div>
-                        <div class="form-group">
-                            <label for="textarea_jsondata">JSON File:</label>
-                            <input type="file" id="file_jsondata" />
-                        </div>
-                        <div class="form-group">
-                            <label for="textarea_jsondata">JSON Data:</label>
-                            <textarea class="form-control" id="textarea_jsondata"></textarea>
-                        </div>
-                        <div class="checkbox">
-                            <label><input id="checkbox_replacedata" type="checkbox" value="0"> Replace</label>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger form-clear">
-                            Clear
-                            <span class="glyphicon glyphicon-trash"></span>
-                        </button>
-                        <button type="submit" class="btn btn-primary">
-                            Submit
-                            <span class="glyphicon glyphicon-send"></span>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">
+                            Close
+                            <span class="glyphicon glyphicon-remove">
+                            </span>
                         </button>
                     </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div id="exportvid" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Export Videos</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="textarea_exportdata">JSON Data:</label>
-                        <textarea class="form-control" id="textarea_exportdata"></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success download-data">
-                        Download
-                        <span class="glyphicon glyphicon-download-alt"></span>
-                    </button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">
-                        Close
-                        <span class="glyphicon glyphicon-remove"></span>
-                    </button>
                 </div>
             </div>
         </div>
-    </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dot/1.0.3/doT.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/blob-polyfill/1.0.20150320/Blob.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2014-11-29/FileSaver.min.js"></script>
-    <script src="js/templates.js"></script>
-    <script src="js/script.js"></script>
-</body>
-
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/dot/1.0.3/doT.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/blob-polyfill/1.0.20150320/Blob.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2014-11-29/FileSaver.min.js"></script>
+        <script src="js/templates.js"></script>
+        <script src="js/script.js"></script>
+    </body>
 </html>

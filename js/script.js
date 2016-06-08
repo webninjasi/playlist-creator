@@ -156,15 +156,14 @@ $("#form_importvid").on("submit", function() {
             $msg.text("Invalid JSON data!");
             return false;
         }
-    }
-    catch (err) {
+    } catch (err) {
         return false;
     }
 
     var replaceall = $($(this).data("checkbox")).is(':checked');
     if (replaceall) {
         videolist = newVidList;
-        
+
         saveVideoList();
         updateView();
 
@@ -191,7 +190,9 @@ $(".download-data").click(function() {
         return false;
     }
 
-    var blob = new Blob([JSON.stringify(videolist)], {type: "application/json;charset=utf-8"});
+    var blob = new Blob([JSON.stringify(videolist)], {
+        type: "application/json;charset=utf-8"
+    });
     saveAs(blob, "playlist-data.json");
 });
 $("#file_jsondata").change(function() {
@@ -208,12 +209,12 @@ $("#file_jsondata").change(function() {
 
     $msg.text("Loading video list from the file!");
 
-    reader.onload = function (evt) {
+    reader.onload = function(evt) {
         $content.val(evt.target.result);
         $msg.text("Loaded video list from '" + file.name + "' successfully!");
     }
 
-    reader.onerror = function (evt) {
+    reader.onerror = function(evt) {
         $msg.text("An error occured while loading video list from '" + file.name + "'!");
     }
 
@@ -221,7 +222,10 @@ $("#file_jsondata").change(function() {
 });
 
 function getVideoInfo(id, callback) {
-    return $.getJSON('https://noembed.com/embed', { format: 'json', url: "https://www.youtube.com/watch?v=" + encodeURIComponent(id) }, callback);
+    return $.getJSON('https://noembed.com/embed', {
+        format: 'json',
+        url: "https://www.youtube.com/watch?v=" + encodeURIComponent(id)
+    }, callback);
 }
 
 function updateLink() {
@@ -259,7 +263,10 @@ function updateView() {
     if (!taglist[selectedTag])
         selectedTag = undefined;
 
-    $(".videolist").html(tplListItem({ list: videolist, order: getOrderedList() }));
+    $(".videolist").html(tplListItem({
+        list: videolist,
+        order: getOrderedList()
+    }));
     $(".taglist").html(tplTag(taglist));
 
     updateLink();
