@@ -25,6 +25,12 @@
                     <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addvid">
                         <span class="glyphicon glyphicon-plus"></span> Add Video
                     </button>
+                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#importvid">
+                        <span class="glyphicon glyphicon-import"></span> Import
+                    </button>
+                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#exportvid">
+                        <span class="glyphicon glyphicon-export"></span> Export
+                    </button>
                 </div>
                 <br>
                 <br>
@@ -93,6 +99,62 @@
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+    <div id="importvid" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <form role="form" id="form_importvid" data-msg="#well_importvid" data-content="#textarea_jsondata" data-checkbox="#checkbox_replacedata">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Import Videos</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="well" id="well_importvid"></div>
+                        <div class="form-group">
+                            <label for="textarea_jsondata">JSON Data:</label>
+                            <textarea class="form-control" id="textarea_jsondata"></textarea>
+                        </div>
+                        <div class="checkbox">
+                            <label><input id="checkbox_replacedata" type="checkbox" value="0"> Replace</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger form-clear">
+                            Clear
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Submit
+                            <span class="glyphicon glyphicon-send"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="exportvid" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Export Videos</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="textarea_exportdata">JSON Data:</label>
+                        <textarea class="form-control" id="textarea_exportdata"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">
+                        Close
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>

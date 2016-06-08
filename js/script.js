@@ -5,6 +5,7 @@ var selectedTag;
 
 if (typeof(Storage) !== "undefined") {
     loadVideoList();
+    updateView();
 }
 
 $(".form-clear").click(function() {
@@ -132,8 +133,42 @@ $("#addvidform").on("submit", function() {
         saveVideoList();
         updateView();
 
-        $msg.text("Added the video successfully!");
+        $msg.text("Added '" + vid.title + "' successfully!");
     });
+
+    return false;
+});
+
+$("#form_importvid").on("submit", function() {
+    var $msg = $($(this).data("msg"));
+
+    var content = $($(this).data("content")).val();
+    if (!content) {
+        $msg.text("Empty JSON data!");
+        return false;
+    }
+
+    var newVidList = JSON.parse(content);
+    if (!newVidList) {
+        $msg.text("Invalid JSON data!");
+        return false;
+    }
+
+    var replaceall = $($(this).data("checkbox")).is(':checked');
+    if (replaceall) {
+        videolist = newVidList;
+        $msg.text("Replaced video list successfully!");
+        return false;
+    }
+
+    for (var id in newVidList) {
+        videolist[id] = newVidList[id];
+    }
+
+    saveVideoList();
+    updateView();
+
+    $msg.text("Imported video list successfully!");
 
     return false;
 });
@@ -149,14 +184,16 @@ function updateLink() {
     $(".playlist-link").attr("href", link);
 }
 
+function updateExportData() {
+    $("#textarea_exportdata").val(JSON.stringify(videolist));
+}
+
 function loadVideoList() {
     var localPlaylist = localStorage.getItem("videolist");
     if (!localPlaylist)
         return;
 
     videolist = JSON.parse(localPlaylist);
-
-    updateView();
 }
 
 function saveVideoList() {
@@ -179,6 +216,7 @@ function updateView() {
     $(".taglist").html(tplTag(taglist));
 
     updateLink();
+    updateExportData();
 }
 
 function getOrderedList() {
