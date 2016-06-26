@@ -134,6 +134,8 @@ $("#addvidform").on("submit", function() {
         updateView();
 
         $msg.text("Added '" + vid.title + "' successfully!");
+    }, function(err) {
+        $msg.text("Error: " + err);
     });
 
     return false;
@@ -221,11 +223,18 @@ $("#file_jsondata").change(function() {
     return false;
 });
 
-function getVideoInfo(id, callback) {
+function getVideoInfo(id, cb_success, cb_error) {
     return $.getJSON('https://noembed.com/embed', {
         format: 'json',
         url: "https://www.youtube.com/watch?v=" + encodeURIComponent(id)
-    }, callback);
+    }, function(data) {
+        if (data["error"]) {
+            cb_error(data["error"]);
+            return;
+        }
+
+        cb_error(data);
+    });
 }
 
 function updateLink() {
