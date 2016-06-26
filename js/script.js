@@ -2,11 +2,15 @@ var playlist = [];
 var videolist = {};
 var taglist = {};
 var selectedTag;
+var searchtext;
 
 if (typeof(Storage) !== "undefined") {
     loadVideoList();
     updateView();
 }
+
+$(".playlist-search")[0].oninput = updateSearchText;
+$(".playlist-search")[0].onpropertychange = updateSearchText;
 
 $(".form-clear").click(function() {
     $(this).closest('form').find("input[type=text], textarea").val("");
@@ -75,7 +79,7 @@ $(".videolist").on("click", ".edit-video", function() {
         return false;
     }
 
-    videolist[id].tags = fixTags(tags);
+    videolist[id].tags = fixSpaces(tags);
     saveVideoList();
     updateView();
 });
@@ -127,7 +131,7 @@ $("#addvidform").on("submit", function() {
         videolist[id] = {
             title: vid.title,
             img: vid.thumbnail_url,
-            tags: fixTags(tags),
+            tags: fixSpaces(tags),
         };
 
         saveVideoList();
@@ -237,6 +241,11 @@ function getVideoInfo(id, cb_success, cb_error) {
     });
 }
 
+function updateSearchText() {
+    searchtext = fixSpaces($(this).val()).split(' ');
+    updateView();
+}
+
 function updateLink() {
     var link = "http://www.youtube.com/watch_videos?video_ids=" + playlist.join(",");
 
@@ -312,11 +321,28 @@ function parseTags(list) {
     }
 }
 
-function fixTags(tags) {
-    if (!tags)
+function fixSpaces(text) {
+    if (!text)
         return "";
 
-    return tags.trim().replace(/\s+/, " ");
+    return text.trim().replace(/\s+/, " ");
+}
+
+function matchedInSearch(id, title, tags) {
+    if (!searchtext)
+        return true;
+
+    id = id.toLowerCase();
+    title = title.toLowerCase();
+
+    for (var i = 0; i < searchtext.length; i++) {
+        var stext = searchtext[i].trim().toLowerCase();
+        if (stext == id || title.indexOf(stext) != -1 || tags.indexOf(stext) != -1) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 function hasSelectedTag(tags) {

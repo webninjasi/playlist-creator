@@ -3,7 +3,7 @@ var tplListItem = doT.template('\
 {{ var dat = it.list[id]; }}\
 {{ var tags = dat.tags.split(" "); }}\
 {{ var inList = inPlaylist(id); }}\
-{{? hasSelectedTag(tags) }}\
+{{? hasSelectedTag(tags) && matchedInSearch(id, dat.title, tags) }}\
 <tr{{? inList }} class="success"{{?}} data-id="{{=id}}">\
 	<td>\
 		<a class="btn btn-xs btn-{{? inList }}danger rem{{??}}success add{{?}}-playlist">\
