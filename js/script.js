@@ -237,7 +237,7 @@ function getVideoInfo(id, cb_success, cb_error) {
             return;
         }
 
-        cb_error(data);
+        cb_success(data);
     });
 }
 
