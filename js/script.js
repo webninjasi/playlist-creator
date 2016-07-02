@@ -105,23 +105,21 @@ $(".videolist").on("click", ".rem-playlist", function() {
 });
 
 $("#addvidform").on("submit", function() {
-    var $msg = $($(this).data("msg"));
-
     var link = $($(this).data("link")).val();
     if (!link) {
-        $msg.text("Empty link!");
+        alert("Empty link!");
         return false;
     }
 
     var matches = link.match(/watch\?v=([-_\w]+)$/);
     if (!matches || matches.length < 2) {
-        $msg.text("Bad link!");
+        alert("Bad link!");
         return false;
     }
 
     var id = matches[1];
     if (videolist[id]) {
-        $msg.text("Already exist!");
+        alert("Already exist!");
         return false;
     }
 
@@ -137,20 +135,18 @@ $("#addvidform").on("submit", function() {
         saveVideoList();
         updateView();
 
-        $msg.text("Added '" + vid.title + "' successfully!");
+        alert("Added '" + vid.title + "' successfully!");
     }, function(err) {
-        $msg.text("Error: " + err);
+        alert("Error: " + err);
     });
 
     return false;
 });
 
 $("#form_importvid").on("submit", function() {
-    var $msg = $($(this).data("msg"));
-
     var content = $($(this).data("content")).val();
     if (!content) {
-        $msg.text("Empty JSON data!");
+        alert("Empty JSON data!");
         return false;
     }
 
@@ -159,7 +155,7 @@ $("#form_importvid").on("submit", function() {
     try {
         newVidList = JSON.parse(content);
         if (!newVidList) {
-            $msg.text("Invalid JSON data!");
+            alert("Invalid JSON data!");
             return false;
         }
     } catch (err) {
@@ -173,7 +169,7 @@ $("#form_importvid").on("submit", function() {
         saveVideoList();
         updateView();
 
-        $msg.text("Replaced video list successfully!");
+        alert("Replaced video list successfully!");
 
         return false;
     }
@@ -185,7 +181,7 @@ $("#form_importvid").on("submit", function() {
     saveVideoList();
     updateView();
 
-    $msg.text("Imported video list successfully!");
+    alert("Imported video list successfully!");
 
     return false;
 });
@@ -207,21 +203,17 @@ $("#file_jsondata").change(function() {
         return false;
     }
 
-    var $msg = $($(this).closest("form").data("msg"));
     var $content = $($(this).closest("form").data("content"));
 
     var reader = new FileReader();
     reader.readAsText(file, "UTF-8");
 
-    $msg.text("Loading video list from the file!");
-
     reader.onload = function(evt) {
         $content.val(evt.target.result);
-        $msg.text("Loaded video list from '" + file.name + "' successfully!");
     }
 
     reader.onerror = function(evt) {
-        $msg.text("An error occured while loading video list from '" + file.name + "'!");
+        alert("An error occured while loading video list from '" + file.name + "'!");
     }
 
     return false;
