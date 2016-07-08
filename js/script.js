@@ -40,7 +40,7 @@ $(".taglist").on("click", ".taglist-all", function() {
     updateView();
 });
 $(".taglist").on("click", ".taglist-tag", function() {
-    selectedTag = $(this).text();
+    selectedTag = $(this).contents().get(0).nodeValue.trim();
     updateView();
 });
 
