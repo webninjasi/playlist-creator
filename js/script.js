@@ -69,7 +69,7 @@ $(".videolist").on("click", ".playlist-down", function() {
     updateView();
 });
 
-$(".videolist").on("click", ".edit-video", function() {
+$(".videolist").on("click", ".edit-tags", function() {
     var id = $(this).closest("tr").data("id");
     if (!videolist[id])
         return;
@@ -82,6 +82,23 @@ $(".videolist").on("click", ".edit-video", function() {
     videolist[id].tags = fixSpaces(tags);
     saveVideoList();
     updateView();
+});
+$(".videolist").on("click", ".replace-video", function() {
+    var id = $(this).closest("tr").data("id");
+    if (!videolist[id])
+        return;
+
+    var link = prompt("Please enter the new link:");
+    if (link == null) {
+        return false;
+    }
+
+    addVideo(link, videolist[id].tags, function() {
+        delete videolist[id];
+
+        saveVideoList();
+        updateView();
+    });
 });
 $(".videolist").on("click", ".del-video", function() {
     if (!confirm("Are you sure?")) {
@@ -106,38 +123,11 @@ $(".videolist").on("click", ".rem-playlist", function() {
 
 $("#addvidform").on("submit", function() {
     var link = $($(this).data("link")).val();
-    if (!link) {
-        alert("Empty link!");
-        return false;
-    }
-
-    var matches = link.match(/watch\?v=([-_\w]+)$/);
-    if (!matches || matches.length < 2) {
-        alert("Bad link!");
-        return false;
-    }
-
-    var id = matches[1];
-    if (videolist[id]) {
-        alert("Already exist!");
-        return false;
-    }
-
     var tags = $($(this).data("tags")).val();
 
-    getVideoInfo(id, function(vid) {
-        videolist[id] = {
-            title: vid.title,
-            img: vid.thumbnail_url,
-            tags: fixSpaces(tags),
-        };
-
+    addVideo(link, tags, function(vid) {
         saveVideoList();
         updateView();
-
-        alert("Added '" + vid.title + "' successfully!");
-    }, function(err) {
-        alert("Error: " + err);
     });
 
     return false;
@@ -218,6 +208,41 @@ $("#file_jsondata").change(function() {
 
     return false;
 });
+
+function addVideo(link, tags, callback) {
+    if (!link) {
+        alert("Empty link!");
+        return;
+    }
+
+    var matches = link.match(/watch\?v=([-_\w]+)$/);
+    if (!matches || matches.length < 2) {
+        alert("Bad link!");
+        return;
+    }
+
+    var id = matches[1];
+    if (videolist[id]) {
+        alert("Already exist!");
+        return;
+    }
+
+    getVideoInfo(id, function(vid) {
+        videolist[id] = {
+            title: vid.title,
+            img: vid.thumbnail_url,
+            tags: fixSpaces(tags),
+        };
+
+        if (callback) {
+            callback(vid);
+        }
+
+        alert("Added '" + vid.title + "' successfully!");
+    }, function(err) {
+        alert("Error: " + err);
+    });
+}
 
 function getVideoInfo(id, cb_success, cb_error) {
     return $.getJSON('https://noembed.com/embed', {

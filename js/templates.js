@@ -38,7 +38,10 @@ var tplListItem = doT.template('\
 		{{?}}\
 	</td>\
 	<td>\
-		<a class="btn btn-xs btn-warning edit-video">\
+		<a class="btn btn-xs btn-warning replace-video">\
+			<span class="glyphicon glyphicon-fire"></span>\
+		</a>\
+		<a class="btn btn-xs btn-warning edit-tags">\
 			<span class="glyphicon glyphicon-edit"></span>\
 		</a>\
 		<a class="btn btn-xs btn-danger del-video">\
