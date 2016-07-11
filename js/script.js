@@ -264,10 +264,11 @@ function updateSearchText() {
 }
 
 function updateLink() {
-    var link = "http://www.youtube.com/watch_videos?video_ids=" + playlist.join(",");
+    var link = "https://www.youtube.com/embed/?playlist=" + playlist.join(",");
 
     $(".playlist-text").val(link);
     $(".playlist-link").attr("href", link);
+    $(".playlist-embed").attr("src", link);
 }
 
 function updateExportData() {
