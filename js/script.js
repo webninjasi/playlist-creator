@@ -353,14 +353,30 @@ function matchedInSearch(id, title, tags) {
     id = id.toLowerCase();
     title = title.toLowerCase();
 
-    for (var i = 0; i < searchtext.length; i++) {
-        var stext = searchtext[i].trim().toLowerCase();
-        if (stext == id || title.indexOf(stext) != -1 || tags.indexOf(stext) != -1) {
-            return true;
+    for (var i = 0, stext, negative; i < searchtext.length; i++) {
+        stext = searchtext[i].trim().toLowerCase();
+        negative = stext[0] == "!";
+
+        if (negative) {
+            stext = stext.substr(1);
+        }
+
+        if (stext == "") {
+            continue;
+        }
+
+        if (negative) {
+            if (stext == id || title.indexOf(stext) != -1 || tags.indexOf(stext) != -1) {
+                return false;
+            }
+        } else {
+            if (stext != id && title.indexOf(stext) == -1 && tags.indexOf(stext) == -1) {
+                return false;
+            }
         }
     }
 
-    return false;
+    return true;
 }
 
 function hasSelectedTag(tags) {
