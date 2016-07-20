@@ -6,7 +6,7 @@
         <meta name="referrer" content="no-referrer"/>
         <meta name="viewport" content="width=device-width"/>
         <title>
-            Youtube Playlist Creator
+            Playlist Creator
         </title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
         <link rel="stylesheet" type="text/css" href="css/style.css"/>
@@ -20,7 +20,7 @@
                 <div class="col-xs-12">
                     <div class="page-header">
                         <h1>
-                            Youtube Playlist Creator
+                            Playlist Creator
                         </h1>
                     </div>
                     <div class="btn-group">
@@ -42,17 +42,63 @@
                     </div>
                     <br/>
                     <br/>
-                    <div class="text-center">
-                        <iframe class="playlist-embed" width="420" height="315" src="https://www.youtube.com/embed/" frameborder="0" allowfullscreen>
-                        </iframe>
-                    </div>
-                    <br/>
-                    <div class="input-group">
-                        <span class="input-group-btn">
-                            <a class="btn btn-info playlist-link glyphicon glyphicon glyphicon-link" href="#" target="_blank">
+                    <ul class="nav nav-pills">
+                        <li class="active">
+                            <a data-toggle="pill" href="#allplayer">
+                                All
                             </a>
-                        </span>
-                        <input type="text" class="form-control playlist-text"/>
+                        </li>
+                        <li>
+                            <a data-toggle="pill" href="#youtubeplayer">
+                                Youtube
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="allplayer" class="tab-pane fade in active">
+                            <div class="player-controls">
+                                <a class="btn btn-default player-previous">
+                                    <span class="glyphicon glyphicon-backward">
+                                    </span>
+                                </a>
+                                <a class="btn btn-default player-play">
+                                    <span class="glyphicon glyphicon-play">
+                                    </span>
+                                </a>
+                                <a class="btn btn-default player-pause">
+                                    <span class="glyphicon glyphicon-pause">
+                                    </span>
+                                </a>
+                                <a class="btn btn-default player-next">
+                                    <span class="glyphicon glyphicon-forward">
+                                    </span>
+                                </a>
+                            </div>
+                            <div id="player" class="player">
+                            </div>
+                        </div>
+                        <div id="youtubeplayer" class="tab-pane fade">
+                            <div class="player">
+                                <iframe class="playlist-embed" src="https://www.youtube.com/embed/" frameborder="0" allowfullscreen>
+                                </iframe>
+                            </div>
+                            <br/>
+                            <div class="input-group">
+                                <span class="input-group-btn">
+                                    <a class="btn btn-info playlist-link glyphicon glyphicon glyphicon-link" href="#" target="_blank">
+                                    </a>
+                                </span>
+                                <input type="text" class="form-control playlist-text"/>
+                            </div>
+                            <br/>
+                            <div class="input-group">
+                                <span class="input-group-btn">
+                                    <a class="btn btn-info playlist-link-2 glyphicon glyphicon glyphicon-link" href="#" target="_blank">
+                                    </a>
+                                </span>
+                                <input type="text" class="form-control playlist-text-2"/>
+                            </div>
+                        </div>
                     </div>
                     <br/>
                     <input type="text" class="form-control playlist-search" placeholder="Search"/>
@@ -232,6 +278,9 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/dot/1.0.3/doT.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/blob-polyfill/1.0.20150320/Blob.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2014-11-29/FileSaver.min.js"></script>
+        <script src="https://www.youtube.com/iframe_api"></script>
+        <script src="https://api.dmcdn.net/all.js"></script>
+        <script src="https://player.vimeo.com/api/player.js"></script>
         <script src="js/templates.js"></script>
         <script src="js/script.js"></script>
     </body>

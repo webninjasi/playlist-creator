@@ -38,6 +38,11 @@ var tplListItem = doT.template('\
 		{{?}}\
 	</td>\
 	<td>\
+		{{? inList }}\
+		<a class="btn btn-xs btn-success player-play-this">\
+			<span class="glyphicon glyphicon-play"></span>\
+		</a>\
+		{{?}}\
 		<a class="btn btn-xs btn-warning replace-video">\
 			<span class="glyphicon glyphicon-fire"></span>\
 		</a>\

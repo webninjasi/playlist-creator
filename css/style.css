@@ -1,5 +1,6 @@
 .video-tags, .taglist-tag, .taglist-all {
     margin-right: 5px;
+    display: inline-block;
 }
 
 .videolist .btn {
@@ -13,4 +14,25 @@
 
 .playlist-search {
     margin-bottom: 10px;
+}
+
+.player-controls, .player {
+    margin: 10px;
+    text-align: center;
+}
+
+.player {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+}
+
+.player iframe, .player object, .player embed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }

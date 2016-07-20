@@ -3,6 +3,15 @@ var videolist = {};
 var taglist = {};
 var selectedTag;
 var searchtext;
+var re_link = {
+    "YT": [/^https?:\/\/(?:\w+\.)?youtube\.com\/watch\?v=([_-\w]+)$/, YoutubePlayer],
+    "DM": [/^https?:\/\/(?:\w+\.)?dailymotion\.com\/video\/(\w+)(?:_.+?)?$/, DailyMotionPlayer],
+    "VM": [/^https?:\/\/(?:\w+\.)?vimeo\.com\/(\d+)$/, VimeoPlayer],
+};
+
+var playerNum;
+var currentPlayer;
+var playerPaused = true;
 
 if (typeof(Storage) !== "undefined") {
     loadVideoList();
@@ -16,6 +25,9 @@ $(".form-clear").click(function() {
     $(this).closest('form').find("input[type=text], textarea").val("");
 });
 $(".playlist-text").click(function() {
+    this.setSelectionRange(0, this.value.length);
+});
+$(".playlist-text-2").click(function() {
     this.setSelectionRange(0, this.value.length);
 });
 
@@ -120,6 +132,20 @@ $(".videolist").on("click", ".rem-playlist", function() {
     removePlaylist(id);
     updateView();
 });
+$(".videolist").on("click", ".player-play-this", function() {
+    var id = $(this).closest("tr").data("id");
+    if (!videolist[id])
+        return;
+
+    idx = playlist.indexOf(id);
+    if (idx == -1) {
+        return false;
+    }
+
+    playerPaused = false;
+    playerNum = idx;
+    initPlayer(idx);
+});
 
 $("#addvidform").on("submit", function() {
     var link = $($(this).data("link")).val();
@@ -156,6 +182,7 @@ $("#form_importvid").on("submit", function() {
     if (replaceall) {
         videolist = newVidList;
 
+        oldVersionCheck();
         saveVideoList();
         updateView();
 
@@ -215,20 +242,22 @@ function addVideo(link, tags, callback) {
         return;
     }
 
-    var matches = link.match(/watch\?v=([-_\w]+)$/);
-    if (!matches || matches.length < 2) {
+    var linfo = parseLink(link);
+    if (!linfo) {
         alert("Bad link!");
         return;
     }
 
-    var id = matches[1];
-    if (videolist[id]) {
+    var key = linfo.type + "|" + linfo.id;
+    if (videolist[key]) {
         alert("Already exist!");
         return;
     }
 
-    getVideoInfo(id, function(vid) {
-        videolist[id] = {
+    getEmbedInfo(link, function(vid) {
+        videolist[key] = {
+            id: linfo.id,
+            type: linfo.type,
             title: vid.title,
             img: vid.thumbnail_url,
             tags: fixSpaces(tags),
@@ -244,10 +273,10 @@ function addVideo(link, tags, callback) {
     });
 }
 
-function getVideoInfo(id, cb_success, cb_error) {
+function getEmbedInfo(link, cb_success, cb_error) {
     return $.getJSON('https://noembed.com/embed', {
         format: 'json',
-        url: "https://www.youtube.com/watch?v=" + encodeURIComponent(id)
+        url: link,
     }, function(data) {
         if (data["error"]) {
             cb_error(data["error"]);
@@ -264,11 +293,33 @@ function updateSearchText() {
 }
 
 function updateLink() {
-    var link = "https://www.youtube.com/embed/?playlist=" + playlist.join(",");
+    var link;
+    var ytplaylist = [];
 
+    if (playlist.length > 0) {
+        for (var i = 0; i < playlist.length; i++) {
+            if (playlist[i].substr(0, 3) == "YT|") {
+                ytplaylist.push(playlist[i].substr(3));
+            }
+        }
+
+        $("#player").show();
+    } else {
+        $("#player").hide();
+    }
+
+    link = "https://www.youtube.com/embed/?playlist=" + ytplaylist.join(",");
     $(".playlist-text").val(link);
     $(".playlist-link").attr("href", link);
     $(".playlist-embed").attr("src", link);
+
+    link = "https://www.youtube.com/watch_videos?video_ids=" + ytplaylist.slice(0, 20).join(",");
+    $(".playlist-text-2").val(link);
+    $(".playlist-link-2").attr("href", link);
+
+    playerPaused = true;
+    playerNum = 0;
+    initPlayer(0);
 }
 
 function updateExportData() {
@@ -281,6 +332,7 @@ function loadVideoList() {
         return;
 
     videolist = JSON.parse(localPlaylist);
+    oldVersionCheck();
 }
 
 function saveVideoList() {
@@ -413,4 +465,177 @@ function swapPlaylist(id, off) {
 
     playlist[idx + off] = playlist[idx];
     playlist[idx] = temp;
+}
+
+function parseLink(link) {
+    for (var type in re_link) {
+        matched = link.match(re_link[type][0]);
+
+        if (matched) {
+            return {
+                "type": type,
+                "id": matched[1],
+            };
+        }
+    }
+}
+
+function oldVersionCheck() {
+    for (var key in videolist) {
+        if (key.indexOf("|") == -1) {
+            videolist[key].id = key;
+            videolist[key].type = "YT";
+            videolist["YT|" + key] = videolist[key];
+            delete videolist[key];
+            console.log("Converted '" + key + "' to Youtube");
+        }
+    }
+}
+
+// All Player
+
+$(".player-play").click(function() {
+    if (!currentPlayer) {
+        return;
+    }
+
+    playerPaused = false;
+    currentPlayer.play();
+});
+
+$(".player-pause").click(function() {
+    if (!currentPlayer) {
+        return;
+    }
+
+    playerPaused = true;
+    currentPlayer.pause();
+});
+
+$(".player-next").click(function() {
+    playerNext();
+});
+
+$(".player-previous").click(function() {
+    playerPrevious();
+});
+
+function playerNext() {
+    if (playerNum == undefined) {
+        playerNum = 0;
+    } else if (!playlist.length) {
+        return;
+    } else if (playerNum == playlist.length - 1) {
+        playerNum = 0;
+    } else {
+        playerNum++;
+    }
+
+    initPlayer(playerNum);
+}
+
+function playerPrevious() {
+    if (playerNum == undefined) {
+        playerNum = 0;
+    } else if (!playlist.length) {
+        return;
+    } else if (playerNum == 0) {
+        playerNum = playlist.length - 1;
+    } else {
+        playerNum--;
+    }
+
+    initPlayer(playerNum);
+}
+
+function initPlayer(num) {
+    if (!playlist.length || !playlist[num]) {
+        return;
+    }
+
+    var elm = document.createElement("div");
+    var vid = videolist[playlist[num]];
+
+    if (!vid) {
+        console.log(playlist[num] + " not found!");
+        return;
+    }
+
+    $("#player").html("");
+    $("#player").append(elm);
+
+    currentPlayer = createPlayer(vid.type, vid.id, elm);
+}
+
+function createPlayer(type, id, playerElm) {
+    if (!re_link[type]) {
+        return;
+    }
+
+    return re_link[type][1](id, playerElm, function() {
+        if (!playerPaused) {
+            currentPlayer.play();
+        }
+    }, function() {
+        playerNext();
+    });
+}
+
+function YoutubePlayer(id, elm, onReady, onEnd) {
+    var player = new YT.Player(elm, {
+        videoId: id,
+        events: {
+            'onReady': onReady,
+            'onStateChange': function(event) {
+                if (event.data == YT.PlayerState.ENDED) {
+                    onEnd();
+                }
+            }
+        }
+    });
+
+    return {
+        play: function() {
+            player.playVideo();
+        },
+        pause: function() {
+            player.pauseVideo();
+        }
+    };
+}
+
+function DailyMotionPlayer(id, elm, onReady, onEnd) {
+    var player = DM.player(elm, {
+        video: id,
+    });
+
+    player.addEventListener('apiready', onReady);
+    player.addEventListener('video_end', onEnd);
+
+    return {
+        play: function() {
+            player.play();
+        },
+        pause: function() {
+            player.pause();
+        }
+    };
+}
+
+function VimeoPlayer(id, elm, onReady, onEnd) {
+    var player = new Vimeo.Player(elm, {
+        id: id,
+    });
+
+    player.ready().then(onReady);
+    player.on('ended', onEnd);
+
+    return {
+        play: function() {
+            player.play();
+        },
+        pause: function() {
+            player.pause();
+        }
+    };
 }
