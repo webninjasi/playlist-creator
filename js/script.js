@@ -178,6 +178,10 @@ $("#form_importvid").on("submit", function() {
         return false;
     }
 
+    if (!confirm("Are you sure?")) {
+        return false;
+    }
+
     var replaceall = $($(this).data("checkbox")).is(':checked');
     if (replaceall) {
         videolist = newVidList;
@@ -195,6 +199,7 @@ $("#form_importvid").on("submit", function() {
         videolist[id] = newVidList[id];
     }
 
+    oldVersionCheck();
     saveVideoList();
     updateView();
 
