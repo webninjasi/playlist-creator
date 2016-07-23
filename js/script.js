@@ -9,9 +9,13 @@ var re_link = {
     "VM": [/^https?:\/\/(?:\w+\.)?vimeo\.com\/(\d+)$/, VimeoPlayer],
 };
 
-var playerNum;
 var currentPlayer;
+var currentlyPlaying;
 var playerPaused = true;
+var options = {
+    loop: false,
+    shuffle: false,
+};
 
 if (typeof(Storage) !== "undefined") {
     loadVideoList();
@@ -105,10 +109,20 @@ $(".videolist").on("click", ".replace-video", function() {
         return false;
     }
 
-    addVideo(link, videolist[id].tags, function() {
+    addVideo(link, videolist[id].tags, function(key) {
         delete videolist[id];
 
         saveVideoList();
+
+        var pidx = playlist.indexOf(id);
+        if (pidx != -1) {
+            playlist[pidx] = key;
+        }
+
+        if (currentlyPlaying == id) {
+            currentlyPlaying = key;
+        }
+
         updateView();
     });
 });
@@ -123,6 +137,7 @@ $(".videolist").on("click", ".del-video", function() {
 
     delete videolist[id];
     saveVideoList();
+    checkPlaylist();
     updateView();
 });
 $(".videolist").on("click", ".rem-playlist", function() {
@@ -137,21 +152,16 @@ $(".videolist").on("click", ".player-play-this", function() {
     if (!videolist[id])
         return;
 
-    idx = playlist.indexOf(id);
-    if (idx == -1) {
-        return false;
-    }
-
     playerPaused = false;
-    playerNum = idx;
-    initPlayer(idx);
+    initPlayer(id);
+    updateView();
 });
 
 $("#addvidform").on("submit", function() {
     var link = $($(this).data("link")).val();
     var tags = $($(this).data("tags")).val();
 
-    addVideo(link, tags, function(vid) {
+    addVideo(link, tags, function(key) {
         saveVideoList();
         updateView();
     });
@@ -188,6 +198,7 @@ $("#form_importvid").on("submit", function() {
 
         oldVersionCheck();
         saveVideoList();
+        checkPlaylist();
         updateView();
 
         alert("Replaced video list successfully!");
@@ -269,7 +280,7 @@ function addVideo(link, tags, callback) {
         };
 
         if (callback) {
-            callback(vid);
+            callback(key);
         }
 
         alert("Added '" + vid.title + "' successfully!");
@@ -307,10 +318,6 @@ function updateLink() {
                 ytplaylist.push(playlist[i].substr(3));
             }
         }
-
-        $("#player").show();
-    } else {
-        $("#player").hide();
     }
 
     link = "https://www.youtube.com/embed/?playlist=" + ytplaylist.join(",");
@@ -321,10 +328,6 @@ function updateLink() {
     link = "https://www.youtube.com/watch_videos?video_ids=" + ytplaylist.slice(0, 20).join(",");
     $(".playlist-text-2").val(link);
     $(".playlist-link-2").attr("href", link);
-
-    playerPaused = true;
-    playerNum = 0;
-    initPlayer(0);
 }
 
 function updateExportData() {
@@ -356,13 +359,21 @@ function updateView() {
     if (!taglist[selectedTag])
         selectedTag = undefined;
 
+    updateLink();
+
+    if (currentlyPlaying) {
+        $("#player").show();
+    } else if (playlist.length > 0) {
+        playerPaused = true;
+        initPlayer(playlist[0]);
+    }
+
     $(".videolist").html(tplListItem({
         list: videolist,
         order: getOrderedList()
     }));
     $(".taglist").html(tplTag(taglist));
 
-    updateLink();
     updateExportData();
 }
 
@@ -370,14 +381,24 @@ function getOrderedList() {
     var keys = Object.keys(videolist);
 
     keys.sort(function(a, b) {
-        return indexOrLen(playlist, a) - indexOrLen(playlist, b);
+        return playlistOrder(a) - playlistOrder(b);
     });
 
     return keys;
 }
 
-function indexOrLen(arr, elm) {
-    return (arr.indexOf(elm) + 1 || arr.length + 1) - 1;
+function playlistOrder(key) {
+    var pidx = playlist.indexOf(key);
+
+    if (pidx == -1) {
+        if (currentlyPlaying == key) {
+            return -1;
+        }
+
+        return playlist.length;
+    }
+
+    return pidx;
 }
 
 function parseTags(list) {
@@ -497,6 +518,20 @@ function oldVersionCheck() {
     }
 }
 
+function checkPlaylist() {
+    var ids = [];
+
+    for (var i = 0; i < playlist.length; i++) {
+        if (!videolist[playlist[i]]) {
+            ids.push(i);
+        }
+    }
+
+    for (var i = 0; i < ids.length; i++) {
+        playlist.splice(ids[i], 1);
+    }
+}
+
 // All Player
 
 $(".player-play").click(function() {
@@ -506,6 +541,7 @@ $(".player-play").click(function() {
 
     playerPaused = false;
     currentPlayer.play();
+    updateView();
 });
 
 $(".player-pause").click(function() {
@@ -525,44 +561,93 @@ $(".player-previous").click(function() {
     playerPrevious();
 });
 
-function playerNext() {
-    if (playerNum == undefined) {
-        playerNum = 0;
+$(".player-shuffle").click(function() {
+    options.shuffle = !options.shuffle;
+
+    if (options.shuffle) {
+        shufflePlaylist();
+        updateView();
+        $(this).addClass("btn-success").removeClass("btn-danger");
+    } else {
+        $(this).addClass("btn-danger").removeClass("btn-success");
+    }
+});
+
+$(".player-loop").click(function() {
+    options.loop = !options.loop;
+
+    if (options.loop) {
+        $(this).addClass("btn-success").removeClass("btn-danger");
+    } else {
+        $(this).addClass("btn-danger").removeClass("btn-success");
+    }
+});
+
+function shufflePlaylist() {
+    var temp, j;
+    for (var i = playlist.length; i; i--) {
+        j = Math.floor(Math.random() * i);
+        temp = playlist[i - 1];
+        playlist[i - 1] = playlist[j];
+        playlist[j] = temp;
+    }
+}
+
+function playerNext(auto) {
+    var num = playlist.indexOf(currentlyPlaying);
+
+    if (num == -1) {
+        num = 0;
     } else if (!playlist.length) {
         return;
-    } else if (playerNum == playlist.length - 1) {
-        playerNum = 0;
+    } else if (num == playlist.length - 1) {
+        if (auto) {
+            if (!options.loop) {
+                return;
+            }
+
+            if (options.shuffle) {
+                shufflePlaylist();
+            }
+        }
+
+        num = 0;
     } else {
-        playerNum++;
+        num++;
     }
 
-    initPlayer(playerNum);
+    initPlayer(playlist[num]);
+    updateView();
 }
 
 function playerPrevious() {
-    if (playerNum == undefined) {
-        playerNum = 0;
+    var num = playlist.indexOf(currentlyPlaying);
+
+    if (num == -1) {
+        num = 0;
     } else if (!playlist.length) {
         return;
-    } else if (playerNum == 0) {
-        playerNum = playlist.length - 1;
+    } else if (num == 0) {
+        num = playlist.length - 1;
     } else {
-        playerNum--;
+        num--;
     }
 
-    initPlayer(playerNum);
+    initPlayer(playlist[num]);
+    updateView();
 }
 
-function initPlayer(num) {
-    if (!playlist.length || !playlist[num]) {
+function initPlayer(key) {
+    if (!key) {
+        currentlyPlaying = undefined;
         return;
     }
 
     var elm = document.createElement("div");
-    var vid = videolist[playlist[num]];
+    var vid = videolist[key];
 
     if (!vid) {
-        console.log(playlist[num] + " not found!");
+        console.log(key + " not found!");
         return;
     }
 
@@ -570,6 +655,7 @@ function initPlayer(num) {
     $("#player").append(elm);
 
     currentPlayer = createPlayer(vid.type, vid.id, elm);
+    currentlyPlaying = key;
 }
 
 function createPlayer(type, id, playerElm) {
@@ -582,7 +668,7 @@ function createPlayer(type, id, playerElm) {
             currentPlayer.play();
         }
     }, function() {
-        playerNext();
+        playerNext(true);
     });
 }
 

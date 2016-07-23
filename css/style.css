@@ -27,6 +27,7 @@
     height: 0;
     overflow: hidden;
     max-width: 100%;
+    display: none;
 }
 
 .player iframe, .player object, .player embed {
