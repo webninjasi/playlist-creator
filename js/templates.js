@@ -20,11 +20,11 @@ var tplListItem = doT.template('\
 	</td>\
 	<td>\
 		{{? dat.img}}\
-		<a href="https://www.youtube.com/watch?v={{=id}}" target="_blank">\
+		<a href="{{=getLink(dat.type, dat.id)}}" target="_blank">\
 			<img class="thumbnail" src="{{=dat.img}}" height="64">\
 		</a>\
 		{{??}}\
-		<a class="btn btn-xs" href="https://www.youtube.com/watch?v={{=id}}" target="_blank">\
+		<a class="btn btn-xs" href="{{=getLink(dat.type, dat.id)}}" target="_blank">\
 			<span class="glyphicon glyphicon-play-circle"></span>\
 		</a>\
 		{{?}}\

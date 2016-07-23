@@ -3,10 +3,75 @@ var videolist = {};
 var taglist = {};
 var selectedTag;
 var searchtext;
-var re_link = {
-    "YT": [/^https?:\/\/(?:\w+\.)?youtube\.com\/watch\?v=([_-\w]+)$/, YoutubePlayer],
-    "DM": [/^https?:\/\/(?:\w+\.)?dailymotion\.com\/video\/(\w+)(?:_.+?)?$/, DailyMotionPlayer],
-    "VM": [/^https?:\/\/(?:\w+\.)?vimeo\.com\/(\d+)$/, VimeoPlayer],
+var videoTypes = {
+    "YT": {
+        re: /^https?:\/\/(?:\w+\.)?youtube\.com\/watch\?v=([_-\w]+)$/,
+        player: function(id, elm, onReady, onEnd) {
+            var player = new YT.Player(elm, {
+                videoId: id,
+                events: {
+                    'onReady': onReady,
+                    'onStateChange': function(event) {
+                        if (event.data == YT.PlayerState.ENDED) {
+                            onEnd();
+                        }
+                    }
+                }
+            });
+
+            return {
+                play: function() {
+                    player.playVideo();
+                },
+                pause: function() {
+                    player.pauseVideo();
+                }
+            };
+        },
+        link: "https://www.youtube.com/watch?v=$id$"
+    },
+    "DM": {
+        re: /^https?:\/\/(?:\w+\.)?dailymotion\.com\/video\/(\w+)(?:_.+?)?$/,
+        player: function(id, elm, onReady, onEnd) {
+            var player = DM.player(elm, {
+                video: id,
+            });
+
+            player.addEventListener('apiready', onReady);
+            player.addEventListener('video_end', onEnd);
+
+            return {
+                play: function() {
+                    player.play();
+                },
+                pause: function() {
+                    player.pause();
+                }
+            };
+        },
+        link: "https://www.dailymotion.com/video/$id$/"
+    },
+    "VM": {
+        re: /^https?:\/\/(?:\w+\.)?vimeo\.com\/(\d+)$/,
+        player: function(id, elm, onReady, onEnd) {
+            var player = new Vimeo.Player(elm, {
+                id: id,
+            });
+
+            player.ready().then(onReady);
+            player.on('ended', onEnd);
+
+            return {
+                play: function() {
+                    player.play();
+                },
+                pause: function() {
+                    player.pause();
+                }
+            };
+        },
+        link: "https://www.vimeo.com/$id$/"
+    },
 };
 
 var currentPlayer;
@@ -494,8 +559,8 @@ function swapPlaylist(id, off) {
 }
 
 function parseLink(link) {
-    for (var type in re_link) {
-        matched = link.match(re_link[type][0]);
+    for (var type in videoTypes) {
+        matched = link.match(videoTypes[type].re);
 
         if (matched) {
             return {
@@ -530,6 +595,14 @@ function checkPlaylist() {
     for (var i = 0; i < ids.length; i++) {
         playlist.splice(ids[i], 1);
     }
+}
+
+function getLink(type, id) {
+    if (!videoTypes[type]) {
+        return "#";
+    }
+
+    return videoTypes[type].link.replace("$id$", id);
 }
 
 // All Player
@@ -659,74 +732,15 @@ function initPlayer(key) {
 }
 
 function createPlayer(type, id, playerElm) {
-    if (!re_link[type]) {
+    if (!videoTypes[type]) {
         return;
     }
 
-    return re_link[type][1](id, playerElm, function() {
+    return videoTypes[type].player(id, playerElm, function() {
         if (!playerPaused) {
             currentPlayer.play();
         }
     }, function() {
         playerNext(true);
     });
-}
-
-function YoutubePlayer(id, elm, onReady, onEnd) {
-    var player = new YT.Player(elm, {
-        videoId: id,
-        events: {
-            'onReady': onReady,
-            'onStateChange': function(event) {
-                if (event.data == YT.PlayerState.ENDED) {
-                    onEnd();
-                }
-            }
-        }
-    });
-
-    return {
-        play: function() {
-            player.playVideo();
-        },
-        pause: function() {
-            player.pauseVideo();
-        }
-    };
-}
-
-function DailyMotionPlayer(id, elm, onReady, onEnd) {
-    var player = DM.player(elm, {
-        video: id,
-    });
-
-    player.addEventListener('apiready', onReady);
-    player.addEventListener('video_end', onEnd);
-
-    return {
-        play: function() {
-            player.play();
-        },
-        pause: function() {
-            player.pause();
-        }
-    };
-}
-
-function VimeoPlayer(id, elm, onReady, onEnd) {
-    var player = new Vimeo.Player(elm, {
-        id: id,
-    });
-
-    player.ready().then(onReady);
-    player.on('ended', onEnd);
-
-    return {
-        play: function() {
-            player.play();
-        },
-        pause: function() {
-            player.pause();
-        }
-    };
 }
