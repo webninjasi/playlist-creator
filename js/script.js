@@ -437,6 +437,7 @@ function updateView() {
     } else if (playlist.length > 0) {
         playerPaused = true;
         initPlayer(playlist[0]);
+        $("#player").show();
     }
 
     $(".videolist").html(tplListItem({
