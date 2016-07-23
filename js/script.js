@@ -106,6 +106,8 @@ $(".playlist-text-2").click(function() {
     this.setSelectionRange(0, this.value.length);
 });
 
+dropboxInit();
+
 $(".add-all").click(function() {
     $(".videolist tr:visible").each(function() {
         var id = $(this).data("id");
@@ -610,6 +612,22 @@ function getLink(type, id) {
     }
 
     return videoTypes[type].link.replace("$id$", id);
+}
+
+function dropboxInit() {
+    var dpBtn = Dropbox.createChooseButton({
+        success: function(files) {
+            if (files[0] && files[0].link) {
+                var link = files[0].link;
+
+                $.get(link, function(data) {
+                    $("#textarea_jsondata").val(data);
+                });
+            }
+        },
+        linkType: "direct",
+    });
+    $("#dropbox_chooser").append(dpBtn);
 }
 
 // All Player
