@@ -15,6 +15,10 @@ var videoTypes = {
                         if (event.data == YT.PlayerState.ENDED) {
                             onEnd();
                         }
+                    },
+                    'onError': function(event) {
+                        console.log("Youtube error id: " + event.data);
+                        onEnd();
                     }
                 }
             });
@@ -39,6 +43,7 @@ var videoTypes = {
 
             player.addEventListener('apiready', onReady);
             player.addEventListener('video_end', onEnd);
+            player.addEventListener('error', onEnd);
 
             return {
                 play: function() {
@@ -60,6 +65,7 @@ var videoTypes = {
 
             player.ready().then(onReady);
             player.on('ended', onEnd);
+            player.on('error', onEnd);
 
             return {
                 play: function() {
