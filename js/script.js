@@ -752,6 +752,7 @@ function initPlayer(key) {
     $("#player").html("");
     $("#player").append(elm);
 
+    setTitleVideo(key);
     currentPlayer = createPlayer(vid.type, vid.id, elm);
     currentlyPlaying = key;
 }
@@ -768,4 +769,14 @@ function createPlayer(type, id, playerElm) {
     }, function() {
         playerNext(true);
     });
+}
+
+function setTitleVideo(key) {
+    var title = "Playlist Creator";
+
+    if (key !== undefined && videolist[key]) {
+        title += " - " + videolist[key].title;
+    }
+
+    document.title = title;
 }
