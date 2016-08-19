@@ -1,6 +1,7 @@
 .video-tags, .taglist-tag, .taglist-all {
     margin-right: 5px;
     display: inline-block;
+    cursor: pointer;
 }
 
 .videolist .btn {
